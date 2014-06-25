@@ -1,0 +1,30 @@
+README :
+Do we talk about MPC ?
+
+What computing needs to be done ?
+
+
+
+
+=> Create example of simple multi-objective
+	f_1 : calculate the travel time of the vehicle
+		eval function :
+			1- original position : t=0,x=0
+			2- density around vehicle = density of closer cell for t
+			3- speed is given by the fundamental diagram of that cell 
+				-freeflow speed v if dens < critic_dens
+				- else : v - w * (dens - critic_dens)
+
+			4- next position : t+dt, x+speed*dt
+			5- as long as x< x_max and t < t_max, back to step 2
+			6- if t < tmax => return t, else t_max too small
+		gradient function :
+			0 if not the density of a cell
+			0 if the value of the cell is not used by the eval function
+			0 if the cell was in freeflow
+			-w else
+
+
+	f_2 : opposite of travel time of vehicles behind the first one
+	f_3 : opposite gradient of speed behind vehicle (vehicles behind must be slowed as quick as possible)
+	f_4 : total travel time (to not be detected)
