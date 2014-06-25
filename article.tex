@@ -2,17 +2,32 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage{fullpage}
-\usepackage{graphicx}				% Use pdf, png, jpg, or epsÂ§ with pdflatex; use eps in DVI mode
+\usepackage{graphicx}				
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{amsthm}
 \usepackage{fullpage}
 
-\title{Multi-objective optimisation for traffic control}
-<<<<<<< HEAD
-\author{Jack D. Reilly, Alexandre Bayen, Samitha Samaranayake}
-=======
+
+% Theorem Styles
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+% Definition Styles
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+
+
+
+
+\title{Multi-objective optimization for traffic control}
+
 \author{Authors}
->>>>>>> bb670f79127b9ae9cb631a44378acfdb7a7d0d06
 \date{}							% Activate to display a given date or no date
 
 \begin{document}
@@ -21,6 +36,9 @@
 \tableofcontents
 
 \section*{Introduction}
+\begin{itemize}
+	\item
+\end{itemize}
 \section{Attacking the freeway}
 	\subsection{The freeway control system}
 		Overview of the freeway control system
@@ -30,7 +48,7 @@
 		taxonomy of scenarios, here are the scenarios of interest for the present work
 		\subsubsection{sensors}
 			describe sensors-spoofing-based attack scenarios
-		\subsubsection{Localised attacks}
+		\subsubsection{Localized attacks}
 			Attack
 		\subsubsection{full control / TMC}
 			describe full control-based attack scenarios
@@ -40,10 +58,49 @@
 		\subsubsection{The control : ramp-metering}	
 	\subsection{Using adjoint control to achieve an objective}
 		adjoint mathematical formulation
-	\subsection{Several objectives : Interactive multiple objective optimisation}
-		motivation : queue limitation and quantisation for example
-		Pareto front, description of the method 
-		
+	\subsection{Several objectives : Interactive multiple objective optimization}
+		What happen if the attacker has already an objective function, but want to add a constraint on the size of the queues to avoid some ramps to be completely closed ? We have two goals at the same time, represented as two objective functions : how can we construct the new objective function ? Many times, finding the objective function for a given problem is challenging, and we may have several objective : this is a \emph{multi-objective optimization problem}.
+		\subsubsection{Multiple objectives and Pareto front}
+			\begin{definition}[Multi objective optimization problem]
+			Given $N \in \mathbb{N}$, let $ ( f_i : O  \longrightarrow \mathbb{R})_{i \leq N} $ be a set of objective function describing the goal of a freeway attack. The \emph{multi-objective optimization problem} we consider is the following simultaneous minimization problem :
+				\begin{equation}\label{eq:multiobj_def}
+						\min_{x\in X} \; \left(f_1(x), f_2(x),\ldots, f_N(x) \right)
+				\end{equation}
+			\end{definition}
+			But as the objective is not unique, we need to define how a solution of equation~\ref{eq:multiobj_def} can be ``better'' than another.
+
+			\begin{definition}[Pareto front]
+			An solution $x_1 \in X$ is said to \emph{Pareto dominate} another solution $x_2$ if :
+				\begin{itemize}
+						\item $\forall i \leq N \quad f_i(x_1) \leq f_i(x_2)$
+						\item $\exists j \leq N \quad f_j(x_2) < f_j(x_2)$
+				\end{itemize}
+			A solution $x_1 \in X$ is called \emph{Pareto optimal} if there is no other solution that dominates it. The set of all Pareto optimal solutions is called the \emph{Pareto front}, $P$
+			\end{definition}
+
+			Without further information, there is no Pareto optimal solution which is better than an other. This is why we need more indications from the attacker. 
+
+			\begin{definition}[Decision Maker]
+				The \emph{Decision Maker} (DM) represent the human behind the multi objective optimization problem. As a human can always chose between two given solutions, the DM can be represented as an absolute order on the set of simulations.
+				As a consequence, we can define the DM preferences as a \emph{hidden} objective function : $f_{DM}$.
+			\end{definition}
+
+			The DM is essential for the optimization problem : the solution(s) of the multi-objective optimization problem from equation \ref{eq:multiobj_def} can only be find given its preferences $f_{DM}$
+
+			\begin{remark}
+				Using the DM's preference function, the multi-objective problem of equation \ref{eq:multiobj_def} becomes :
+				\begin{equation}\label{eq:multiobj_dm}
+						\min_{x\in X}  \; f_{DM}(x) \; \Longleftrightarrow \;\min_{x\in P} \;f_{DM}(x)
+				\end{equation}
+			\end{remark}
+			
+		\subsubsection{Interactive optimization}
+			But even with the DM's help, solving a multi-objective optimization problem remains complex : 
+			\begin{itemize}
+			\item Most of the time, the DM's hidden objective function $f_{DM}$ cannot be given explicitly : the space of all simulations is too big for the DM to think about all the possibilities and classify them.
+			\item The Pareto front can be huge and difficult to compute.
+			\end{itemize}
+			As we cannot have access to $f_{DM}$, we need a method that \emph{interacts} with the Decision Maker. Heuristically, this method would compute simulations, and ask the DM for his preferences. But, as this cannot be done automatically, we need to limit the number of interactions with the DM (it takes time). Given equation \ref{eq:multiobj_dm}, the best way to to so is to only ask the DM to compare solutions from the Pareto front $P$, as they are the best we can compute without interaction with the DM.
 \section{Attacks}
 	\subsection{Scenario 1 : ``congestion on demand''}
 		\subsubsection{Problem statement}
@@ -53,7 +110,7 @@
 		\subsubsection{Implementations}
 			\paragraph{"Box" objective}
 				choice of objective and results (images, graphs...), AIMSUN
-			\paragraph{Partial objectives : morse attack}
+			\paragraph{Partial objectives : Morse attack}
 				short paragraph, images from the smartamerica-demo ?
 			\paragraph{Space and time images}
 				Cal logo (short paragraph, just the result)
@@ -61,9 +118,9 @@
 		\subsubsection{Problem statement}
 			Escaping from a car-chase, explain why we cannot use a method like before
 		\subsubsection{Formulation : Multi objectives}
-			Defining every objective function that we want to minimise, and how we will search for solutions in the Pareto front
+			Defining every objective function that we want to minimize, and how we will search for solutions in the Pareto front
 		\subsubsection{Implementations}
 			Show different steps of the algorithm, of exploration and ``convergence''
 \section*{Conclusion}
-			
+
 \end{document}  
